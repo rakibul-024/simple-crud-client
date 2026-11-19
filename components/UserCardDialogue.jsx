@@ -37,21 +37,23 @@ const UserCardDialoguePage = ({ user }) => {
       const result = await res.json()
 
       if (result.modifiedCount > 0) {
-        setOpen(false) // Close the dialog after a successful update
-        router.refresh() // Refresh server components to reflect updated data
+        setOpen(false)
+        router.refresh()
       }
     } catch (error) {
       console.error("Failed to update user:", error)
     }
-  } // <-- Missing closing brace was here
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="mx-2" variant="outline">
-          Edit
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button className="mx-2" variant="outline">
+            Edit
+          </Button>
+        }
+      />
       <DialogContent className="sm:max-w-sm">
         <form onSubmit={handleUpdateUser} className="space-y-4">
           <DialogHeader>
@@ -72,11 +74,13 @@ const UserCardDialoguePage = ({ user }) => {
             </Field>
           </FieldGroup>
           <DialogFooter>
-            <DialogClose asChild>
-              <Button type="button" variant="outline">
-                Cancel
-              </Button>
-            </DialogClose>
+            <DialogClose
+              render={
+                <Button type="button" variant="outline">
+                  Cancel
+                </Button>
+              }
+            />
             <Button type="submit">Save changes</Button>
           </DialogFooter>
         </form>
