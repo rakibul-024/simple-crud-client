@@ -11,6 +11,7 @@ import {
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import UserCardDialoguePage from "./UserCardDialogue";
 
 
 const UserCardPage = ({user}) => {
@@ -45,7 +46,7 @@ const UserCardPage = ({user}) => {
       <Link href={`/users/${_id}`}>
         <Button className="w-full">View Details</Button>
        </Link>
-       <Button className="mx-4">Edit</Button>
+      <UserCardDialoguePage user={user} ></UserCardDialoguePage>
         <Button
          onClick={() => handleDeleteUser(_id)} variant="destructive">
           Delete
