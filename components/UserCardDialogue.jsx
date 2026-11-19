@@ -1,3 +1,7 @@
+'use client'
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -14,22 +18,40 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 const UserCardDialoguePage = ({ user }) => {
+  const router = useRouter()
+  const [open, setOpen] = useState(false)
+
   const handleUpdateUser = async (e) => {
     e.preventDefault()
     const formData = new FormData(e.target)
     const updateUser = Object.fromEntries(formData.entries())
-    console.log("Update user data:", updateUser)
-  }
+
+    try {
+      const res = await fetch(`http://localhost:5000/users/${user._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateUser),
+      })
+      const result = await res.json()
+
+      if (result.modifiedCount > 0) {
+        setOpen(false) // Close the dialog after a successful update
+        router.refresh() // Refresh server components to reflect updated data
+      }
+    } catch (error) {
+      console.error("Failed to update user:", error)
+    }
+  } // <-- Missing closing brace was here
 
   return (
-    <Dialog>
-      <DialogTrigger
-        render={
-          <Button className="mx-2" variant="outline">
-            Edit
-          </Button>
-        }
-      />
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button className="mx-2" variant="outline">
+          Edit
+        </Button>
+      </DialogTrigger>
       <DialogContent className="sm:max-w-sm">
         <form onSubmit={handleUpdateUser} className="space-y-4">
           <DialogHeader>
@@ -50,7 +72,11 @@ const UserCardDialoguePage = ({ user }) => {
             </Field>
           </FieldGroup>
           <DialogFooter>
-            <DialogClose render={<Button variant="outline">Cancel</Button>} />
+            <DialogClose asChild>
+              <Button type="button" variant="outline">
+                Cancel
+              </Button>
+            </DialogClose>
             <Button type="submit">Save changes</Button>
           </DialogFooter>
         </form>
