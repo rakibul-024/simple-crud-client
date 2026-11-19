@@ -1,4 +1,4 @@
-
+'use client'
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -8,14 +8,30 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 
 const UserCardPage = ({user}) => {
+  const { _id } = user;
+  const router =useRouter();
+  const handleDeleteUser = async () => {
+    console.log('Delete user ID:', _id);
+    const res = await fetch(`http://localhost:5000/users/${_id}`, {
+      method: "DELETE",
+    });
+    const afterDelete = await res.json();
+    console.log('After delete:', afterDelete);
+    if(afterDelete.deletedCount > 0) {
+      console.log('User deleted successfully');
+      router.refresh();
+    }
+  } ;
+
+
     return (
  <Card className="relative mx-auto w-full max-w-sm pt-0">
-     
-  
       <CardHeader>
         <CardAction>
          <h2>No action</h2>
@@ -26,12 +42,16 @@ const UserCardPage = ({user}) => {
         </CardDescription>
       </CardHeader>
       <CardFooter>
-       <Link href={`/users/${user._id}`}>
+      <Link href={`/users/${_id}`}>
         <Button className="w-full">View Details</Button>
        </Link>
+       <Button className="mx-4">Edit</Button>
+        <Button
+         onClick={() => handleDeleteUser(_id)} variant="destructive">
+          Delete
+        </Button>
       </CardFooter>
     </Card>
     );
 };
-
 export default UserCardPage;
